@@ -1,5 +1,5 @@
 # Counting_Bakarat
-A personal project to try finding the best counting cards method in bakarat (no venv required)
+A personal project to try finding the best counting cards method in bakarat
 
 # Counting methods:
 Tutti i metodi usati saranno testati tramite una simulazione di gioco con il file .py nel quale si dovrà inserire unicamente il metodo utilizzato e la simulazione verrà ripetuta tot volte stimando poi un balance del player usando la regola: conteggio positivo = puntata alta, conteggio negativo = puntata bassa
