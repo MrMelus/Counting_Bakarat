@@ -12,28 +12,32 @@ def deck_composition(n):
         "banco": 0
     }
     for i in range(n):
+        game_state["cards"] = 52*8
+        game_state["deck"] = [0] *13
         play(game_state)
 
 def play(gs):
     while gs["cards"]>9:
+        gs["p1"] = 0
+        gs["p2"] = 0
+        gs["banco"] = 0
         deal(gs) 
 
 def deal(gs):
     for i in range(2):
         value = pick(gs) +1
-        gs["cards"] -=1
         if value >= 10: value = 0
         gs["p1"] += value
 
         value = pick(gs) +1
-        gs["cards"] -=1
         if value >= 10: value = 0
         gs["p2"] += value
 
         value = pick(gs) +1
-        gs["cards"] -=1
         if value >= 10: value = 0
         gs["banco"] += value
+
+        gs["cards"] -=3
 
     gs["p1"] = gs["p1"]%10
     gs["p2"] = gs["p2"]%10
