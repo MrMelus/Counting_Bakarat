@@ -21,6 +21,9 @@ def play(gs):
         gs["p2"] = 0
         gs["banco"] = 0
         deal(gs) 
+        print(gs["n"],") ",end="")
+        winners(gs)
+        gs["n"] += 1
 
 def deal(gs):
     for i in range(2):
@@ -40,8 +43,7 @@ def deal(gs):
     gs["p2"] = gs["p2"]%10
     gs["banco"] = gs["banco"]%10
     decision(gs)
-    print(gs)
-    gs["n"] += 1
+    
     
     
 
@@ -73,16 +75,12 @@ def pick(gs):
     return value
 
 def winners(gs):
-    if gs["p1"] > gs["banco"] and gs["p2"] > gs["banco"]: print("p1 and p2 win")
-
-    elif gs["p1"] > gs["banco"] and gs["p2"] < gs["banco"]: 
-        print("p1 wins", end=" ")
-        if gs["banco"] == gs["p2"]: print("p2 come")
-    elif gs["p1"] > gs["banco"] and gs["p2"] < gs["banco"]:
-        print("p2 wins", end=" ")
-        if gs["banco"] == gs["p2"]: print("p1 come")
-    elif gs["p1"] < gs["banco"] and gs["p2"] < gs["banco"]: print("banco wins")
+    # Determiniamo lo stato di p1 rispetto al banco
+    res1 = "vince" if gs["p1"] > gs["banco"] else ("come" if gs["p1"] == gs["banco"] else "perde")
+    # Determiniamo lo stato di p2 rispetto al banco
+    res2 = "vince" if gs["p2"] > gs["banco"] else ("come" if gs["p2"] == gs["banco"] else "perde")
     
+    print(f"P1 {res1}, P2 {res2} | Banco aveva: {gs['banco']}")
 
 def main():
     n = int(input("Quante volte vuoi simulare?\n"))
