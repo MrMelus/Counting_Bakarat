@@ -1,10 +1,9 @@
 import random
 
 
-
 def deck_composition(n):
     game_state = {
-        #"n":1,
+        "n":1,
         "deck": [0] * 13,
         "cards": 52 * 8,
         "p1": 0,
@@ -37,22 +36,45 @@ def deal(gs):
         if value >= 10: value = 0
         gs["banco"] += value
 
-        gs["cards"] -=3
-
     gs["p1"] = gs["p1"]%10
     gs["p2"] = gs["p2"]%10
     gs["banco"] = gs["banco"]%10
-    #print(gs)
-    #gs["n"] += 1
+    decision(gs)
+    print(gs)
+    gs["n"] += 1
     
     
+
+def decision(gs):
+    if (gs["banco"] < 8):
+        if (gs["p1"] <= 4):
+            value = pick(gs) +1
+            if value >= 10: value = 0
+            gs["p1"] += value
+        elif gs["p2"]<=4:
+            value = pick(gs) +1
+            if value >= 10: value = 0
+            gs["p2"] += value
+        elif gs["banco"]<= 4:
+            value = pick(gs) +1
+            if value >= 10: value = 0
+            gs["banco"] += value
+    
+    gs["p1"] = gs["p1"]%10
+    gs["p2"] = gs["p2"]%10
+    gs["banco"] = gs["banco"]%10
+
 def pick(gs):
     value = random.randint(0,12)
     while gs["deck"][value]>31:
         value = random.randint(0,12)
     gs["deck"][value] += 1
+    gs["cards"] -= 1
     return value
-    
+
+#def banco_playstyle(gs):
+    #if gs["p1"] <= 4 and gs["p2"] <= 4 and gs["banco"] <=3:
+
 def main():
     n = int(input("Quante volte vuoi simulare?\n"))
     deck_composition(n)
