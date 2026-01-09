@@ -48,19 +48,21 @@ def deal(gs):
     
 
 def decision(gs):
+    carte = [0]*2
     if (gs["banco"] < 8):
         if (gs["p1"] <= 4):
-            value = pick(gs) +1
-            if value >= 10: value = 0
-            gs["p1"] += value
-        elif gs["p2"]<=4:
-            value = pick(gs) +1
-            if value >= 10: value = 0
-            gs["p2"] += value
-        elif gs["banco"]<= 4:
-            value = pick(gs) +1
-            if value >= 10: value = 0
-            gs["banco"] += value
+            carte[0] = pick(gs) +1
+            if carte[0] >= 10: carte[0] = 0
+            gs["p1"] += carte[0]
+        if gs["p2"]<=4:
+            carte[1] = pick(gs) +1
+            if carte[1] >= 10: carte[1] = 0
+            gs["p2"] += carte[1]
+        if gs["banco"]<= 5:
+            if banco_playstyle(gs,carte[0],carte[1]) == 1:
+                value = pick(gs) +1
+                if value >= 10: value = 0
+                gs["banco"] += value
     
     gs["p1"] = gs["p1"]%10
     gs["p2"] = gs["p2"]%10
@@ -73,6 +75,13 @@ def pick(gs):
     gs["deck"][value] += 1
     gs["cards"] -= 1
     return value
+
+def banco_playstyle(gs,c1,c2):
+    if gs["p1"] <= 4 and c1 <= 2 and gs["p2"] <= 4 and c2 <= 2 and gs["banco"] == 4: return 0
+    elif gs["p1"] >= 5 and gs["p2"] >= 5 and gs["banco"] == 5: return 1
+    elif gs["p1"] >= 8 and gs["p2"] >= 8 and gs["banco"] <= 7: return 1
+    elif gs["banco"] <=4: return 1
+    else: return 0
 
 def winners(gs):
     # Determiniamo lo stato di p1 rispetto al banco
