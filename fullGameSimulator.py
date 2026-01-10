@@ -8,11 +8,13 @@ def deck_composition(n):
         "cards": 52 * 8,
         "p1": 0,
         "p2": 0,
-        "banco": 0
+        "banco": 0,
+        "balance" : 0
     }
     for i in range(n):
         game_state["cards"] = 52*8
         game_state["deck"] = [0] *13
+        game_state["balance"] = 0
         play(game_state)
 
 def play(gs):
@@ -20,10 +22,12 @@ def play(gs):
         gs["p1"] = 0
         gs["p2"] = 0
         gs["banco"] = 0
+        betValue = 10
         deal(gs) 
-        print(gs["n"],") ",end="")
-        winners(gs)
+        #print(gs["n"],") ",end="")
+        winners(gs,betValue)
         gs["n"] += 1
+    print(gs["balance"], end= " ")
 
 def deal(gs):
     for i in range(2):
@@ -43,8 +47,6 @@ def deal(gs):
     gs["p2"] = gs["p2"]%10
     gs["banco"] = gs["banco"]%10
     decision(gs)
-    
-    
     
 
 def decision(gs):
@@ -83,13 +85,16 @@ def banco_playstyle(gs,c1,c2):
     elif gs["banco"] <=4: return 1
     else: return 0
 
-def winners(gs):
+def winners(gs,betValue):
     # Determiniamo lo stato di p1 rispetto al banco
     res1 = "vince" if gs["p1"] > gs["banco"] else ("come" if gs["p1"] == gs["banco"] else "perde")
     # Determiniamo lo stato di p2 rispetto al banco
     res2 = "vince" if gs["p2"] > gs["banco"] else ("come" if gs["p2"] == gs["banco"] else "perde")
     
-    print(f"P1 {res1}, P2 {res2} | Banco aveva: {gs['banco']}")
+    if res1 == "vince": gs["balance"] += betValue
+    elif res1 == "perde": gs["balance"] -= betValue
+
+    #print(f"P1 {res1}, P2 {res2} | Banco aveva: {gs['banco']}")
 
 def main():
     n = int(input("Quante volte vuoi simulare?\n"))
