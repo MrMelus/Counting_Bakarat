@@ -9,7 +9,9 @@ def deck_composition(n):
         "p1": 0,
         "p2": 0,
         "banco": 0,
-        "balance" : 0
+        "balance" : 0,
+        "betValue" : 10,
+        "oldBalance": 0
     }
     for i in range(n):
         game_state["cards"] = 52*8
@@ -22,12 +24,18 @@ def play(gs):
         gs["p1"] = 0
         gs["p2"] = 0
         gs["banco"] = 0
-        betValue = 10
-        deal(gs) 
+        gs["betValue"] = betDecider(gs,gs["oldBalance"],gs["betValue"])
+        #print(gs["betValue"], end= " ")
+        deal(gs)
+        gs["oldBalance"] = gs["balance"]
         #print(gs["n"],") ",end="")
-        winners(gs,betValue)
+        winners(gs,gs["betValue"])
         gs["n"] += 1
     print(gs["balance"], end= " ")
+
+def betDecider(gs,oldBalance,n):
+    if gs["balance"] < oldBalance: return n*2
+    else: return 10
 
 def deal(gs):
     for i in range(2):
