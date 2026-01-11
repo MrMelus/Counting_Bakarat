@@ -1,7 +1,11 @@
 import random
+import pandas as pd
 
 
-def deck_composition(n):
+
+def deck_composition(n,nome_strategia):
+    report_giocate = []
+
     game_state = {
         "n":1,
         "deck": [0] * 13,
@@ -16,6 +20,15 @@ def deck_composition(n):
         game_state["deck"] = [0] *13
         game_state["balance"] = 0
         play(game_state)
+        report_giocate.append({
+            "Simulazione": i + 1,
+            "Bilancio_Finale": game_state["balance"]
+        })
+
+    df = pd.DataFrame(report_giocate)
+    nome_file = f"report_metodi/risultati_{nome_strategia}.xlsx"
+    df.to_excel(nome_file,index= False)
+    
 
 def play(gs):
     while gs["cards"]>9:
@@ -98,7 +111,8 @@ def winners(gs,betValue):
 
 def main():
     n = int(input("Quante volte vuoi simulare?\n"))
-    deck_composition(n)
+    strategia = "Static"
+    deck_composition(n,strategia)
 
 if __name__ == "__main__":
     main()
