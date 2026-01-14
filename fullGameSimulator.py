@@ -46,7 +46,7 @@ def play(gs):
     print(gs["balance"], end= " ")
 
 def bet__decider(gs):
-    if gs["oldBalance"] > gs["balance"]: return gs["betValue"]*2
+    if gs["oldBalance"] > gs["balance"]: return min(gs["betValue"]*2,80)
     elif gs["oldBalance"] == gs["balance"]: return gs["betValue"]
     else: return 10
 
