@@ -27,9 +27,9 @@ def deck_composition(n,nome_strategia):
             "Bilancio_Finale": game_state["balance"]
         })
 
-    #df = pd.DataFrame(report_giocate)
+    df = pd.DataFrame(report_giocate)
     nome_file = f"report_metodi/risultati_{nome_strategia}.xlsx"
-    #df.to_excel(nome_file,index= False)
+    df.to_excel(nome_file,index= False)
 
 
 def play(gs):
