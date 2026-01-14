@@ -26,9 +26,9 @@ def deck_composition(n,nome_strategia):
             "Bilancio_Finale": game_state["balance"]
         })
 
-    df = pd.DataFrame(report_giocate)
+    #df = pd.DataFrame(report_giocate)
     nome_file = f"report_metodi/risultati_{nome_strategia}.xlsx"
-    df.to_excel(nome_file,index= False)
+    #df.to_excel(nome_file,index= False)
 
 
 def play(gs):
@@ -42,6 +42,8 @@ def play(gs):
         winners(gs)
         gs["n"] += 1
     print(gs["balance"], end= " ")
+
+
 
 def deal(gs):
     for i in range(2):
@@ -112,7 +114,7 @@ def winners(gs):
 
 def main():
     n = int(input("Quante volte vuoi simulare?\n"))
-    strategia = "Static"
+    strategia = "Double_when_loosing"
     deck_composition(n,strategia)
 
 if __name__ == "__main__":
