@@ -26,9 +26,9 @@ def deck_composition(n,nome_strategia):
             "Bilancio_Finale": game_state["balance"]
         })
 
-    df = pd.DataFrame(report_giocate)
+    #df = pd.DataFrame(report_giocate)
     nome_file = f"report_metodi/risultati_{nome_strategia}.xlsx"
-    df.to_excel(nome_file,index= False)
+    #df.to_excel(nome_file,index= False)
 
 
 def play(gs):
@@ -36,12 +36,15 @@ def play(gs):
         gs["p1"] = 0
         gs["p2"] = 0
         gs["banco"] = 0
-        gs["betValue"] = 10
+        gs["betValue"] = bet_decider(gs)
         deal(gs) 
         #print(gs["n"],") ",end="")
         winners(gs)
         gs["n"] += 1
     print(gs["balance"], end= " ")
+
+def bet_decider(gs):
+    return 10
 
 def deal(gs):
     for i in range(2):
