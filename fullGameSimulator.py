@@ -13,22 +13,25 @@ def deck_composition(n,nome_strategia):
         "p1": 0,
         "p2": 0,
         "banco": 0,
-        "betValue": 0,
-        "balance" : 0
+        "betValue": 10,
+        "balance" : 0,
+        "oldBalance" :0,
+        "cignoNero" : 0
     }
     for i in range(n):
         game_state["cards"] = 52*8
         game_state["deck"] = [0] *13
         game_state["balance"] = 0
+        game_state["cignoNero"] = 0
         play(game_state)
         report_giocate.append({
             "Simulazione": i + 1,
             "Bilancio_Finale": game_state["balance"]
         })
 
-    #df = pd.DataFrame(report_giocate)
+    df = pd.DataFrame(report_giocate)
     nome_file = f"report_metodi/risultati_{nome_strategia}.xlsx"
-    #df.to_excel(nome_file,index= False)
+    df.to_excel(nome_file,index= False)
 
 
 def play(gs):
@@ -37,6 +40,7 @@ def play(gs):
         gs["p2"] = 0
         gs["banco"] = 0
         gs["betValue"] = bet_decider(gs)
+        gs["oldBalance"] = gs["balance"]
         deal(gs) 
         #print(gs["n"],") ",end="")
         winners(gs)
@@ -44,7 +48,11 @@ def play(gs):
     print(gs["balance"], end= " ")
 
 def bet_decider(gs):
-    return 10
+    if gs["oldBalance"] > gs["balance"]:
+        if gs["cignoNero"] >4 : return max(10,gs["betValue"]//2)
+        else: return min(80,gs["betValue"]*2)
+    elif gs["oldBalance"] == gs["balance"]: return gs["betValue"]
+    else: return 10
 
 def deal(gs):
     for i in range(2):
@@ -108,14 +116,18 @@ def winners(gs):
     # Determiniamo lo stato di p2 rispetto al banco
     res2 = "vince" if gs["p2"] > gs["banco"] else ("come" if gs["p2"] == gs["banco"] else "perde")
     
-    if res1 == "vince": gs["balance"] += gs["betValue"]
-    elif res1 == "perde": gs["balance"] -= gs["betValue"]
+    if res1 == "vince": 
+        gs["balance"] += gs["betValue"]
+        gs["cignoNero"] = 0
+    elif res1 == "perde": 
+        gs["balance"] -= gs["betValue"]
+        gs["cignoNero"] += 1
 
     #print(f"P1 {res1}, P2 {res2} | Banco aveva: {gs['banco']}")
 
 def main():
     n = int(input("Quante volte vuoi simulare?\n"))
-    strategia = "Static"
+    strategia = "Martingala_parachute"
     deck_composition(n,strategia)
 
 if __name__ == "__main__":
