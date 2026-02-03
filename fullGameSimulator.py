@@ -22,6 +22,7 @@ def deck_composition(n,nome_strategia):
         game_state["cards"] = 52*8
         game_state["deck"] = [0] *13
         game_state["balance"] = 0
+        game_state["pos"] = 0
         play(game_state)
         report_giocate.append({
             "Simulazione": i + 1,
@@ -38,8 +39,8 @@ def play(gs):
         gs["p1"] = 0
         gs["p2"] = 0
         gs["banco"] = 0
-        gs["oldBalance"] = gs["balance"]
         gs["betValue"] = bet_decider(gs)
+        gs["oldBalance"] = gs["balance"]
         deal(gs) 
         #print(gs["n"],") ",end="")
         winners(gs)
@@ -49,9 +50,9 @@ def play(gs):
 def bet_decider(gs):
     scale = [1,3,2,6]
     if gs["oldBalance"] < gs["balance"] and gs["pos"] < 3: gs["pos"] += 1
-    elif gs["oldBalance"] == gs["balance"]: return gs["betValue"] * scale[gs["pos"]]
+    elif gs["oldBalance"] == gs["balance"]: return 10 * scale[gs["pos"]]
     else: gs["pos"] = 0
-    return gs["betValue"] * scale[gs["pos"]]
+    return 10 * scale[gs["pos"]]
 
 def deal(gs):
     for i in range(2):
@@ -122,7 +123,7 @@ def winners(gs):
 
 def main():
     n = int(input("Quante volte vuoi simulare?\n"))
-    strategia = "method1-3-2-6"
+    strategia = "data"
     deck_composition(n,strategia)
 
 if __name__ == "__main__":
