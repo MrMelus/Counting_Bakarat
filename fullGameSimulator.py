@@ -46,9 +46,7 @@ def play(gs):
     print(gs["balance"], end= " ")
 
 def bet_decider(gs):
-    if gs["oldBalance"] > gs["balance"]: return min(gs["betValue"] +10,80)
-    elif gs["oldBalance"] == gs["balance"]: return gs["betValue"]
-    return max(10,gs["betValue"] - 10)
+    return 10
 
 def deal(gs):
     for i in range(2):
@@ -119,7 +117,7 @@ def winners(gs):
 
 def main():
     n = int(input("Quante volte vuoi simulare?\n"))
-    strategia = "Dalebert"
+    strategia = "Static"
     deck_composition(n,strategia)
 
 if __name__ == "__main__":
