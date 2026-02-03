@@ -13,7 +13,7 @@ def deck_composition(n,nome_strategia):
         "p1": 0,
         "p2": 0,
         "banco": 0,
-        "betValue": 0,
+        "betValue": 10,
         "balance" : 0,
         "oldBalance": 0
     }
