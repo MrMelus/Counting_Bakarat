@@ -127,7 +127,7 @@ def winners(gs):
 
 def main():
     n = int(input("Quante volte vuoi simulare?\n"))
-    strategia = "Martingala_parachute"
+    strategia = "data"
     deck_composition(n,strategia)
 
 if __name__ == "__main__":
