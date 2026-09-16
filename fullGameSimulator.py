@@ -2,10 +2,10 @@ import random
 import pandas as pd
 
 COUNT_WEIGHTS = {
-    0: 1, 1: 1, 2: 1, 3: 1,       
-    4: -1, 5: -1, 6: -1, 7: -1,   
-    8: 0,                         
-    9: 0, 10: 0, 11: 0, 12: 0   
+    0: 0, 1: 0, 2: -1, 3: -1,       
+    4: 0, 5: 0, 6: 0, 7: -1,   
+    8: -1,                         
+    9: 1, 10: 1, 11: 1, 12: 1   
 }
 
 def deck_composition(n,nome_strategia):
@@ -53,12 +53,12 @@ def play(gs):
     print(gs["balance"], end= " ")
 
 def bet_decider(gs):
-    mazzi = max(gs["card"]/52.0,0.5)
+    mazzi = max(gs["cards"]/52.0,0.5)
     trueCount = gs["runningCount"] / mazzi
 
     if trueCount >= 2.0:
-        return 50
-    else if trueCount <= -2.0:
+        return 60
+    elif trueCount <= -2.0:
         return 10
     return 20
 
@@ -132,7 +132,7 @@ def winners(gs):
 
 def main():
     n = int(input("Quante volte vuoi simulare?\n"))
-    strategia = "Static"
+    strategia = "Euristic_count1"
     deck_composition(n,strategia)
 
 if __name__ == "__main__":
