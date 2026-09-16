@@ -53,7 +53,14 @@ def play(gs):
     print(gs["balance"], end= " ")
 
 def bet_decider(gs):
-    return 10
+    mazzi = max(gs["card"]/52.0,0.5)
+    trueCount = gs["runningCount"] / mazzi
+
+    if trueCount >= 2.0:
+        return 50
+    else if trueCount <= -2.0:
+        return 10
+    return 20
 
 def deal(gs):
     for i in range(2):
