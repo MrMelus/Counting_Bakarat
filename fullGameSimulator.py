@@ -1,7 +1,12 @@
 import random
 import pandas as pd
 
-
+COUNT_WEIGHTS = {
+    0: 1, 1: 1, 2: 1, 3: 1,       
+    4: -1, 5: -1, 6: -1, 7: -1,   
+    8: 0,                         
+    9: 0, 10: 0, 11: 0, 12: 0   
+}
 
 def deck_composition(n,nome_strategia):
     report_giocate = []
@@ -10,6 +15,7 @@ def deck_composition(n,nome_strategia):
         "n":1,
         "deck": [0] * 13,
         "cards": 52 * 8,
+        "runningCount": 0,
         "p1": 0,
         "p2": 0,
         "banco": 0,
@@ -21,6 +27,7 @@ def deck_composition(n,nome_strategia):
         game_state["cards"] = 52*8
         game_state["deck"] = [0] *13
         game_state["balance"] = 0
+        game_state["runningCount"] = 0
         play(game_state)
         report_giocate.append({
             "Simulazione": i + 1,
@@ -46,7 +53,14 @@ def play(gs):
     print(gs["balance"], end= " ")
 
 def bet_decider(gs):
-    return 10
+    mazzi = max(gs["card"]/52.0,0.5)
+    trueCount = gs["runningCount"] / mazzi
+
+    if trueCount >= 2.0:
+        return 50
+    else if trueCount <= -2.0:
+        return 10
+    return 20
 
 def deal(gs):
     for i in range(2):
@@ -95,6 +109,7 @@ def pick(gs):
         value = random.randint(0,12)
     gs["deck"][value] += 1
     gs["cards"] -= 1
+    gs["runningCount"] += COUNT_WEIGHTS.get(value,0)
     return value
 
 def banco_playstyle(gs,c1,c2):
