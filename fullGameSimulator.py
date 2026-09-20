@@ -32,7 +32,8 @@ def deck_composition(n,nome_strategia):
         "balance" : 0,
         "oldBalance": 0,
         "wins": 0,
-        "mani": 0
+        "mani": 0,
+        "totalBalance": 0
     }
     for i in range(n):
         game_state["cards"] = 52*8
@@ -50,7 +51,7 @@ def deck_composition(n,nome_strategia):
     print("\n--- RISULTATI SIMULAZIONE ---")
     print(f"Strategia: {nome_strategia}")
     print(f"Mani totali giocate: {game_state['mani']}")
-    print(f"Vittorie P1: {game_state['p1_wins']}")
+    print(f"Vittorie P1: {game_state['wins']}")
     print(f"Win Rate P1: {win_rate:.2f}%")
     print(f"Bilancio Finale Netto: {game_state['totalBalance']}")
     print("-----------------------------\n")
@@ -71,6 +72,7 @@ def play(gs):
         winners(gs)
         gs["n"] += 1
         gs["mani"]+= 1
+        gs["totalBalance"] += gs["balance"]
     #print(gs["balance"], end= " ")
 
 def bet_decider(gs):
