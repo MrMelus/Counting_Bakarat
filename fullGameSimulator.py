@@ -1,142 +1,143 @@
 import random
 import pandas as pd
 
-COUNT_WEIGHTS = {
-    0: 0, 1: 0, 2: -1, 3: -1,       
-    4: 0, 5: 0, 6: 0, 7: -1,   
-    8: -1,                         
-    9: 1, 10: 1, 11: 1, 12: 1   
-}
-
+# Baseline calcolata
 EV0 = -0.26
 
-
-def deck_composition(n,nome_strategia):
-    report_giocate = []
-
+def run_simulation_without_card(n, card_to_remove=None):
     game_state = {
-        "n":1,
         "deck": [0] * 13,
         "cards": 52 * 8,
-        "runningCount": 0,
         "p1": 0,
         "p2": 0,
-        "mani": 0,
         "banco": 0,
         "betValue": 10,
-        "balance" : 0,
-        "oldBalance": 0,
-        "totalBalance": 0
+        "balance": 0,
+        "totalBalance": 0,
+        "mani": 0
     }
-    for i in range(n):
-        game_state["cards"] = 52*8
-        game_state["deck"] = [0] *13
+    
+    for _ in range(n):
+        game_state["deck"] = [0] * 13
+        game_state["cards"] = 52 * 8
         game_state["balance"] = 0
-        game_state["runningCount"] = 0
-        play(game_state)
-        report_giocate.append({
-            "Simulazione": i + 1,
-            "Bilancio_Finale": game_state["balance"]
-        })
-    ev0 = game_state["totalBalance"] / game_state["mani"]
-    print(f"Mani totali giocate: {game_state['mani']}")
-    print(f"Bilancio complessivo: {game_state['totalBalance']}")
-    print(f"EV0 (valore atteso per mano): {ev0:.5f}")
-    #df = pd.DataFrame(report_giocate)
-    #nome_file = f"report_metodi/risultati_{nome_strategia}.xlsx"
-    #df.to_excel(nome_file,index= False)
+        
+        # Se dobbiamo rimuovere una carta, escludiamo tutte le 32 copie
+        if card_to_remove is not None:
+            game_state["deck"][card_to_remove] = 32
+            game_state["cards"] -= 32
 
+        play(game_state)
+
+    ev_rimozione = game_state["totalBalance"] / game_state["mani"]
+    return ev_rimozione
 
 def play(gs):
-    while gs["cards"]>9:
+    while gs["cards"] > 9:
         gs["p1"] = 0
         gs["p2"] = 0
         gs["banco"] = 0
-        gs["betValue"] = bet_decider(gs)
-        gs["oldBalance"] = gs["balance"]
         deal(gs) 
-        #print(gs["n"],") ",end="")
         winners(gs)
-        gs["n"] += 1
         gs["mani"] += 1
     gs["totalBalance"] += gs["balance"]
-    #print(gs["balance"], end= " ")
-
-def bet_decider(gs):
-    return 10
 
 def deal(gs):
-    for i in range(2):
-        value = pick(gs) +1
-        if value >= 10: value = 0
-        gs["p1"] += value
+    for _ in range(2):
+        val = pick(gs) + 1
+        if val >= 10: val = 0
+        gs["p1"] += val
 
-        value = pick(gs) +1
-        if value >= 10: value = 0
-        gs["p2"] += value
+        val = pick(gs) + 1
+        if val >= 10: val = 0
+        gs["p2"] += val
 
-        value = pick(gs) +1
-        if value >= 10: value = 0
-        gs["banco"] += value
+        val = pick(gs) + 1
+        if val >= 10: val = 0
+        gs["banco"] += val
 
-    gs["p1"] = gs["p1"]%10
-    gs["p2"] = gs["p2"]%10
-    gs["banco"] = gs["banco"]%10
+    gs["p1"] %= 10
+    gs["p2"] %= 10
+    gs["banco"] %= 10
     decision(gs)
-    
 
 def decision(gs):
-    carte = [0]*2
-    if (gs["banco"] < 8):
-        if (gs["p1"] <= 4):
-            carte[0] = pick(gs) +1
+    carte = [0] * 2
+    if gs["banco"] < 8:
+        if gs["p1"] <= 4:
+            carte[0] = pick(gs) + 1
             if carte[0] >= 10: carte[0] = 0
             gs["p1"] += carte[0]
-        if gs["p2"]<=4:
-            carte[1] = pick(gs) +1
+        if gs["p2"] <= 4:
+            carte[1] = pick(gs) + 1
             if carte[1] >= 10: carte[1] = 0
             gs["p2"] += carte[1]
-        if gs["banco"]<= 5:
-            if banco_playstyle(gs,carte[0],carte[1]) == 1:
-                value = pick(gs) +1
-                if value >= 10: value = 0
-                gs["banco"] += value
-    
-    gs["p1"] = gs["p1"]%10
-    gs["p2"] = gs["p2"]%10
-    gs["banco"] = gs["banco"]%10
+        if gs["banco"] <= 5:
+            if banco_playstyle(gs, carte[0], carte[1]) == 1:
+                val = pick(gs) + 1
+                if val >= 10: val = 0
+                gs["banco"] += val
+
+    gs["p1"] %= 10
+    gs["p2"] %= 10
+    gs["banco"] %= 10
 
 def pick(gs):
-    value = random.randint(0,12)
-    while gs["deck"][value]>31:
-        value = random.randint(0,12)
+    value = random.randint(0, 12)
+    while gs["deck"][value] > 31:
+        value = random.randint(0, 12)
     gs["deck"][value] += 1
     gs["cards"] -= 1
-    gs["runningCount"] += COUNT_WEIGHTS.get(value,0)
     return value
 
-def banco_playstyle(gs,c1,c2):
+def banco_playstyle(gs, c1, c2):
     if gs["p1"] <= 4 and c1 <= 2 and gs["p2"] <= 4 and c2 <= 2 and gs["banco"] == 4: return 0
     elif gs["p1"] >= 5 and gs["p2"] >= 5 and gs["banco"] == 5: return 1
     elif gs["p1"] >= 8 and gs["p2"] >= 8 and gs["banco"] <= 7: return 1
-    elif gs["banco"] <=4: return 1
+    elif gs["banco"] <= 4: return 1
     else: return 0
 
 def winners(gs):
-    # Determiniamo lo stato di p1 rispetto al banco
     res1 = "vince" if gs["p1"] > gs["banco"] else ("come" if gs["p1"] == gs["banco"] else "perde")
-    # Determiniamo lo stato di p2 rispetto al banco
-    res2 = "vince" if gs["p2"] > gs["banco"] else ("come" if gs["p2"] == gs["banco"] else "perde")
-    
-    if res1 == "vince": gs["balance"] += gs["betValue"]
-    elif res1 == "perde": gs["balance"] -= gs["betValue"]
-
-    #print(f"P1 {res1}, P2 {res2} | Banco aveva: {gs['banco']}")
+    if res1 == "vince": 
+        gs["balance"] += gs["betValue"]
+    elif res1 == "perde": 
+        gs["balance"] -= gs["betValue"]
 
 def main():
-    n = int(input("Quante volte vuoi simulare?\n"))
-    strategia = "EV0"
-    deck_composition(n,strategia)
+    n_sabot = 50000 
+    nomi_carte = ['Asso', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+    
+    print(f"{'Carta Rimossa':<12} | {'EV con rimozione':<18} | {'EoR (Delta)':<14} | {'Segno Suggerito'}")
+    print("-" * 65)
+
+    risultati_eor = []
+
+    for rango in range(13):
+        ev_c = run_simulation_without_card(n_sabot, card_to_remove=rango)
+        delta = ev_c - EV0  # EV_senza - EV0
+        
+        if delta > 0.03:
+            segno = "+1 (Favorevole al Banco)"
+        elif delta < -0.03:
+            segno = "-1 (Favorevole a P1)"
+        else:
+            segno = " 0 (Neutro)"
+            
+        print(f"{nomi_carte[rango]:<12} | {ev_c:<18.4f} | {delta:<+14.4f} | {segno}")
+        
+        risultati_eor.append({
+            "Rango": rango,
+            "Carta": nomi_carte[rango],
+            "EV_Senza": ev_c,
+            "EoR": delta,
+            "Segno_Suggerito": segno
+        })
+
+    # Esportazione rapida dei dati grezzi
+    df_eor = pd.DataFrame(risultati_eor)
+    df_eor.to_excel("report_metodi/risultati_EoR.xlsx", index=False)
+    print("\nRisultati salvati su report_metodi/risultati_EoR.xlsx")
 
 if __name__ == "__main__":
     main()
