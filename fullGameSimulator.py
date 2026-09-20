@@ -8,6 +8,7 @@ COUNT_WEIGHTS = {
     9: 1, 10: 1, 11: 1, 12: 1   
 }
 
+
 def deck_composition(n,nome_strategia):
     report_giocate = []
 
@@ -18,10 +19,12 @@ def deck_composition(n,nome_strategia):
         "runningCount": 0,
         "p1": 0,
         "p2": 0,
+        "mani": 0,
         "banco": 0,
         "betValue": 10,
         "balance" : 0,
-        "oldBalance": 0
+        "oldBalance": 0,
+        "totalBalance": 0
     }
     for i in range(n):
         game_state["cards"] = 52*8
@@ -33,10 +36,13 @@ def deck_composition(n,nome_strategia):
             "Simulazione": i + 1,
             "Bilancio_Finale": game_state["balance"]
         })
-
-    df = pd.DataFrame(report_giocate)
-    nome_file = f"report_metodi/risultati_{nome_strategia}.xlsx"
-    df.to_excel(nome_file,index= False)
+    ev0 = game_state["totalBalance"] / game_state["mani"]
+    print(f"Mani totali giocate: {game_state['mani']}")
+    print(f"Bilancio complessivo: {game_state['totalBalance']}")
+    print(f"EV0 (valore atteso per mano): {ev0:.5f}")
+    #df = pd.DataFrame(report_giocate)
+    #nome_file = f"report_metodi/risultati_{nome_strategia}.xlsx"
+    #df.to_excel(nome_file,index= False)
 
 
 def play(gs):
@@ -50,17 +56,12 @@ def play(gs):
         #print(gs["n"],") ",end="")
         winners(gs)
         gs["n"] += 1
-    print(gs["balance"], end= " ")
+        gs["mani"] += 1
+    gs["totalBalance"] += gs["balance"]
+    #print(gs["balance"], end= " ")
 
 def bet_decider(gs):
-    mazzi = max(gs["cards"]/52.0,0.5)
-    trueCount = gs["runningCount"] / mazzi
-
-    if trueCount >= 2.0:
-        return 60
-    elif trueCount <= -2.0:
-        return 10
-    return 20
+    return 10
 
 def deal(gs):
     for i in range(2):
@@ -132,7 +133,7 @@ def winners(gs):
 
 def main():
     n = int(input("Quante volte vuoi simulare?\n"))
-    strategia = "Euristic_count1"
+    strategia = "EV0"
     deck_composition(n,strategia)
 
 if __name__ == "__main__":
