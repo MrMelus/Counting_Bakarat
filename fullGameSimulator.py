@@ -8,6 +8,8 @@ COUNT_WEIGHTS = {
     9: 1, 10: 1, 11: 1, 12: 1   
 }
 
+EV0 = -0.26
+
 
 def deck_composition(n,nome_strategia):
     report_giocate = []
