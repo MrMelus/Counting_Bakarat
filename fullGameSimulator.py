@@ -2,10 +2,19 @@ import random
 import pandas as pd
 
 COUNT_WEIGHTS = {
-    0: 0, 1: 0, 2: -1, 3: -1,       
-    4: 0, 5: 0, 6: 0, 7: -1,   
-    8: -1,                         
-    9: 1, 10: 1, 11: 1, 12: 1   
+    0: 0,   # Asso
+    1: 0,   # 2
+    2: 1,   # 3
+    3: 1,   # 4
+    4: 1,   # 5
+    5: 0,   # 6
+    6: 0,   # 7
+    7: 1,   # 8
+    8: 0,   # 9
+    9: -1,  # 10
+    10: -1, # J
+    11: -1, # Q
+    12: -1  # K   
 }
 
 def deck_composition(n,nome_strategia):
@@ -21,7 +30,10 @@ def deck_composition(n,nome_strategia):
         "banco": 0,
         "betValue": 10,
         "balance" : 0,
-        "oldBalance": 0
+        "oldBalance": 0,
+        "wins": 0,
+        "mani": 0,
+        "totalBalance": 0
     }
     for i in range(n):
         game_state["cards"] = 52*8
@@ -33,7 +45,16 @@ def deck_composition(n,nome_strategia):
             "Simulazione": i + 1,
             "Bilancio_Finale": game_state["balance"]
         })
-
+    
+    win_rate = (game_state["wins"] / game_state["mani"]) * 100
+    
+    print("\n--- RISULTATI SIMULAZIONE ---")
+    print(f"Strategia: {nome_strategia}")
+    print(f"Mani totali giocate: {game_state['mani']}")
+    print(f"Vittorie P1: {game_state['wins']}")
+    print(f"Win Rate P1: {win_rate:.2f}%")
+    print(f"Bilancio Finale Netto: {game_state['totalBalance']}")
+    print("-----------------------------\n")
     df = pd.DataFrame(report_giocate)
     nome_file = f"report_metodi/risultati_{nome_strategia}.xlsx"
     df.to_excel(nome_file,index= False)
@@ -50,7 +71,9 @@ def play(gs):
         #print(gs["n"],") ",end="")
         winners(gs)
         gs["n"] += 1
-    print(gs["balance"], end= " ")
+        gs["mani"]+= 1
+        gs["totalBalance"] += gs["balance"]
+    #print(gs["balance"], end= " ")
 
 def bet_decider(gs):
     mazzi = max(gs["cards"]/52.0,0.5)
@@ -125,14 +148,16 @@ def winners(gs):
     # Determiniamo lo stato di p2 rispetto al banco
     res2 = "vince" if gs["p2"] > gs["banco"] else ("come" if gs["p2"] == gs["banco"] else "perde")
     
-    if res1 == "vince": gs["balance"] += gs["betValue"]
+    if res1 == "vince": 
+        gs["balance"] += gs["betValue"]
+        gs["wins"]+= 1
     elif res1 == "perde": gs["balance"] -= gs["betValue"]
 
     #print(f"P1 {res1}, P2 {res2} | Banco aveva: {gs['banco']}")
 
 def main():
     n = int(input("Quante volte vuoi simulare?\n"))
-    strategia = "Euristic_count1"
+    strategia = "EoR_count1"
     deck_composition(n,strategia)
 
 if __name__ == "__main__":
